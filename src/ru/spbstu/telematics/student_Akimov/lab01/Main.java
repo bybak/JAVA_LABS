@@ -1,15 +1,15 @@
-public class Main {
+п»їpublic class Main {
     public static void main(String[] args) {
 		long number = 0;
 		if (args.length > 0) {
 			number=Long.parseLong(args[0]);
 			System.out.println("-------------------------");
-			System.out.println("Входное значение: " + number);
-			System.out.println("Число Фибоначчи: " + fib(number));
+			System.out.println("Р’С…РѕРґРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ: " + number);
+			System.out.println("Р§РёСЃР»Рѕ Р¤РёР±РѕРЅР°С‡С‡Рё: " + fib(number));
 			System.out.print("-------------------------");
 		}
 		else {
-			System.out.println("Отсутствует параметр");
+			System.out.println("РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РїР°СЂР°РјРµС‚СЂ");
 		}
     }
 	public static long fib(long n){
