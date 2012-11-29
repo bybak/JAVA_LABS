@@ -33,8 +33,8 @@ public class SortedVector implements ISortedVector{
 		}
 		else{
 			Comparable arrayTemp[] = new Comparable[array.length];
-			if(array[0].compareTo(o)==1){ 	// меньше первого
-				//System.out.println("Меньше первого");
+			if(array[0].compareTo(o)==1){ 	// РјРµРЅСЊС€Рµ РїРµСЂРІРѕРіРѕ
+				//System.out.println("РњРµРЅСЊС€Рµ РїРµСЂРІРѕРіРѕ");
 				for(int i=0;i<elementCount;i++){
 					arrayTemp[i+1]=array[i];
 				}
@@ -44,13 +44,13 @@ public class SortedVector implements ISortedVector{
 					array[i]=arrayTemp[i];
 				}
 			}
-			else if(array[elementCount-1].compareTo(o)==-1){ // больше последнего
-				//System.out.println("Больше последнего");
+			else if(array[elementCount-1].compareTo(o)==-1){ // Р±РѕР»СЊС€Рµ РїРѕСЃР»РµРґРЅРµРіРѕ
+				//System.out.println("Р‘РѕР»СЊС€Рµ РїРѕСЃР»РµРґРЅРµРіРѕ");
 				array[elementCount]=o;
 				elementCount++;
 			}
 			else{
-				//System.out.println("Посередине");
+				//System.out.println("РџРѕСЃРµСЂРµРґРёРЅРµ");
 				for(int i=0;i<elementCount;i++){
 					int compare1 = array[i].compareTo(o);
 					if(compare1 == -1)
