@@ -25,5 +25,9 @@ public class Main {
 		vector.remove(9);
 		vector.printVector();
 		
+		for (Comparable test1 : vector) {
+			System.out.println("Element: " + test1);
+		}
+		
 	}
 }

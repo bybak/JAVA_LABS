@@ -1,7 +1,8 @@
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Iterator;
 
-public class SortedVector implements ISortedVector{
+public class SortedVector implements ISortedVector, Iterable<Comparable>{
 	private Comparable array[];
 	private int elementCount;
 	
@@ -9,6 +10,10 @@ public class SortedVector implements ISortedVector{
 		this.array = new Comparable[10];
 		this.elementCount = 0;
 		System.out.println("CONSTRUCTOR!");
+	}
+	
+	public Comparable getElement(){
+		return this.getElement();
 	}
 
 	@Override
@@ -122,6 +127,41 @@ public class SortedVector implements ISortedVector{
 				System.out.println(i + ") " + array[i]);
 			}
 		}
+	}
+
+	@Override
+	public Iterator <Comparable> iterator() {
+		return new MyIterator();
+	}
+	
+	class MyIterator implements Iterator <Comparable>{
+		private int iterPos = 0;
+		@Override
+		public boolean hasNext() {
+			if(iterPos<SortedVector.this.elementCount)
+				return true;
+			else
+				return false;
+		}
+
+		@Override
+		public Comparable next() {
+			if(array[iterPos]!=null){
+				Comparable nextVal = array[iterPos];
+				iterPos++;
+				return nextVal;
+			}
+			else
+				iterPos++;
+			return null;
+		}
+
+		@Override
+		public void remove() {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 	
 }
