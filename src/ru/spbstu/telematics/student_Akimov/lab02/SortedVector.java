@@ -20,7 +20,7 @@ public class SortedVector implements ISortedVector, Iterable<Comparable>{
 	public void add(Comparable o) {
 		if(elementCount%10==0 && elementCount!=0){
 			//System.out.println("RESIZE");
-			resizeArray();
+			resizeArray(1);
 		}
 		if(elementCount==0){
 			array[elementCount]=o;
@@ -74,12 +74,24 @@ public class SortedVector implements ISortedVector, Iterable<Comparable>{
 		}
 	}
 	
-	private void resizeArray(){
-		Comparable arrayTemp[] = new Comparable[array.length+10];
-		for(int i=0;i<array.length;i++)
-			arrayTemp[i]=array[i];
-		array = new Comparable[array.length+10];
-		for(int i=0;i<array.length;i++)
+	private void resizeArray(int pm){
+		int znak;
+		if(pm==1)
+			znak = 1;
+		else 
+			znak = -1;
+		int length = array.length+(10*znak);
+		Comparable arrayTemp[] = new Comparable[array.length+(10*znak)];
+		if(pm!=1){
+			for(int i=0;i<length;i++)
+				arrayTemp[i]=array[i];
+		}
+		else{
+			for(int i=0;i<array.length;i++)
+				arrayTemp[i]=array[i];
+		}
+		array = new Comparable[array.length+(10*znak)];
+		for(int i=0;i<length;i++)
 			array[i]=arrayTemp[i];
 	}
 	
@@ -96,6 +108,8 @@ public class SortedVector implements ISortedVector, Iterable<Comparable>{
 			}
 			array[elementCount-1]=null;
 			elementCount--;
+			if(array.length-elementCount>10)
+				resizeArray(0);
 			for(int i=0;i<elementCount;i++)
 				array[i]=arrayTemp[i];
 		}

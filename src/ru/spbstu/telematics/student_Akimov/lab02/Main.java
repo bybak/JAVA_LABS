@@ -14,6 +14,7 @@ public class Main {
 		vector.add(54);
 		vector.add(67);
 		vector.add(7);
+		vector.add(7);
 
 		vector.printVector();
 		
@@ -22,12 +23,15 @@ public class Main {
 		System.out.println("-----IndexOf(Comparable)----");
 		System.out.println(vector.indexOf(133));
 		System.out.println("----Remove(Int)-----");
-		vector.remove(9);
+		vector.remove(2);
+		vector.remove(2);
+		vector.remove(2);
+		vector.remove(2);
 		vector.printVector();
 		
 		for (Comparable test1 : vector) {
 			System.out.println("Element: " + test1);
 		}
-		
+		System.out.println("");
 	}
 }
