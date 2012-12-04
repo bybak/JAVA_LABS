@@ -2,22 +2,25 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class SortedVector implements ISortedVector, Iterable<Comparable>{
-	private Comparable array[];
+public class SortedVector<T extends Comparable<T>> implements ISortedVector<T>, Iterable<Comparable>{
+	private Comparable[] array;
 	private int elementCount;
 	
 	public SortedVector() {
+		//this.array = (T[]) new Object [10];
+		//this.array = (T[]) Array.newInstance(SortedVector.class, 10);
+		//this.array = (T[]) Array.newInstance(class, 10); 
 		this.array = new Comparable[10];
 		this.elementCount = 0;
 		System.out.println("CONSTRUCTOR!");
 	}
 	
-	public Comparable getElement(){
+	public T getElement(){
 		return this.getElement();
 	}
 
 	@Override
-	public void add(Comparable o) {
+	public void add(T o) {
 		if(elementCount%10==0 && elementCount!=0){
 			//System.out.println("RESIZE");
 			resizeArray(1);
@@ -38,8 +41,9 @@ public class SortedVector implements ISortedVector, Iterable<Comparable>{
 		}
 		else{
 			Comparable arrayTemp[] = new Comparable[array.length];
-			if(array[0].compareTo(o)==1){ 	// РјРµРЅСЊС€Рµ РїРµСЂРІРѕРіРѕ
-				//System.out.println("РњРµРЅСЊС€Рµ РїРµСЂРІРѕРіРѕ");
+			//T[] arrayTemp = (T[]) new Object[array.length];
+			if(array[0].compareTo(o)==1){ 	// меньше первого
+				//System.out.println("Меньше первого");
 				for(int i=0;i<elementCount;i++){
 					arrayTemp[i+1]=array[i];
 				}
@@ -49,13 +53,13 @@ public class SortedVector implements ISortedVector, Iterable<Comparable>{
 					array[i]=arrayTemp[i];
 				}
 			}
-			else if(array[elementCount-1].compareTo(o)==-1){ // Р±РѕР»СЊС€Рµ РїРѕСЃР»РµРґРЅРµРіРѕ
-				//System.out.println("Р‘РѕР»СЊС€Рµ РїРѕСЃР»РµРґРЅРµРіРѕ");
+			else if(array[elementCount-1].compareTo(o)==-1){ // больше последнего
+				//System.out.println("Больше последнего");
 				array[elementCount]=o;
 				elementCount++;
 			}
 			else{
-				//System.out.println("РџРѕСЃРµСЂРµРґРёРЅРµ");
+				//System.out.println("Посередине");
 				for(int i=0;i<elementCount;i++){
 					int compare1 = array[i].compareTo(o);
 					if(compare1 == -1)
@@ -82,6 +86,7 @@ public class SortedVector implements ISortedVector, Iterable<Comparable>{
 			znak = -1;
 		int length = array.length+(10*znak);
 		Comparable arrayTemp[] = new Comparable[array.length+(10*znak)];
+		//T[] arrayTemp = (T[]) new Object[array.length+(10*znak)];
 		if(pm!=1){
 			for(int i=0;i<length;i++)
 				arrayTemp[i]=array[i];
@@ -91,6 +96,7 @@ public class SortedVector implements ISortedVector, Iterable<Comparable>{
 				arrayTemp[i]=array[i];
 		}
 		array = new Comparable[array.length+(10*znak)];
+		//array = (T[]) new Object[array.length+(10*znak)];
 		for(int i=0;i<length;i++)
 			array[i]=arrayTemp[i];
 	}
@@ -100,6 +106,7 @@ public class SortedVector implements ISortedVector, Iterable<Comparable>{
 	public void remove(int index) {
 		if(index<elementCount && index>=0){
 			Comparable arrayTemp[] = new Comparable[array.length];
+			//T[] arrayTemp = (T[]) new Object[array.length];
 			for(int i=0;i<elementCount-1;i++){
 				if(i<index)
 					arrayTemp[i]=array[i];
@@ -119,15 +126,15 @@ public class SortedVector implements ISortedVector, Iterable<Comparable>{
 	}
 
 	@Override
-	public Comparable get(int index) {
+	public T get(int index) {
 		if(index<=array.length){
-			return array[index];
+			return (T) array[index];
 		}
 		return null;
 	}
 
 	@Override
-	public int indexOf(Comparable o) {
+	public int indexOf(T o) {
 		for(int i=0;i<elementCount;i++){
 			if(array[i].compareTo(o)==0)
 				return i;
@@ -175,7 +182,5 @@ public class SortedVector implements ISortedVector, Iterable<Comparable>{
 			// TODO Auto-generated method stub
 			
 		}
-		
 	}
-	
 }

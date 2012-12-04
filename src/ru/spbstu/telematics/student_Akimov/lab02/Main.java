@@ -1,7 +1,7 @@
 public class Main {
 	public static void main(String[] args) {
 		Element test = new Element(7);
-		SortedVector vector = new SortedVector();
+		SortedVector<Integer> vector = new SortedVector<Integer>();
 		vector.add(50);
 		vector.add(30);
 		vector.add(10);
