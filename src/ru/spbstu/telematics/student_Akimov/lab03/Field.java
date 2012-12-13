@@ -13,8 +13,8 @@ public class Field extends JFrame{
 	private int count;
 	private int first = 0;
 	private int second = 0;
-	private int flag1 = 0;
-	private int flag2 = 0;
+	volatile private int flag1 = 0;
+	volatile private int flag2 = 0;
 	private String message;
 	
 	JLabel messageLabel;
