@@ -43,13 +43,15 @@ public class ServerMain {
                     }
                     if (data[2].equals(connecting)) {
                     	boolean flag = false;
-	                    for(int i=0;i<onlineUsers.size();i++){
-	                    	if(onlineUsers.get(i).equalsIgnoreCase(data[0])){
-	                    		System.out.println("[" + data[0] + "] already exist");
-	                    		flag = true;
-	                    		break;
-	                    	}
-	                    }
+                    	synchronized (onlineUsers) {
+                    		for(int i=0;i<onlineUsers.size();i++){
+    	                    	if(onlineUsers.get(i).equalsIgnoreCase(data[0])){
+    	                    		System.out.println("[" + data[0] + "] already exist");
+    	                    		flag = true;
+    	                    		break;
+    	                    	}
+    	                    }	
+						} 
 	                    if(!flag){
 	                    	tellEveryone((data[0] + "¥" + data[1] + "¥" + chat));
 	                    	userAdd(data[0]);
@@ -91,7 +93,9 @@ public class ServerMain {
 			while (true) {
 				Socket clientSock = serverSock.accept();
 				PrintWriter writer = new PrintWriter(clientSock.getOutputStream());
-				clientOutputStreams.add(writer);
+				synchronized (clientOutputStreams) {
+					clientOutputStreams.add(writer);
+				}
 				Thread listener = new Thread(new ClientHandler(clientSock, writer));
 				listener.start();
 				System.out.println("got a connection");
@@ -103,7 +107,7 @@ public class ServerMain {
 		} 
 	} 
 
-	public void userAdd (String data) {
+	public synchronized void userAdd (String data) {
         String message;
         String add = "¥ ¥Connect", done = "Server¥ ¥Done";
         onlineUsers.add(data);
@@ -118,7 +122,7 @@ public class ServerMain {
         tellEveryone(done);
 	}
 
-	public void userRemove (String data) {
+	public synchronized void userRemove (String data) {
         String message;
         String add = "¥ ¥Connect", done = "Server¥ ¥Done";
         onlineUsers.remove(data);
@@ -132,7 +136,7 @@ public class ServerMain {
         tellEveryone(done);
 	}
 
-        public void tellEveryone(String message) {
+        public synchronized void tellEveryone(String message) {
 		Iterator it = clientOutputStreams.iterator();
 
 		while (it.hasNext()) {
@@ -146,20 +150,5 @@ public class ServerMain {
 				System.out.println("error telling everyone");
 			}
 		}
-	}
-        
-    public void tellOne(String message) {
-		Iterator it = clientOutputStreams.iterator();
-		while (it.hasNext()) {
-			try {
-				PrintWriter writer = (PrintWriter) it.next();
-				writer.println(message);
-				System.out.println("Sending" + message);
-                                writer.flush();
-			} 
-			catch (Exception ex) {
-				System.out.println("error telling everyone");
-			} 
-		} 
-    }       
+	}     
 }

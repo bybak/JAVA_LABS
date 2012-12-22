@@ -45,7 +45,9 @@ public class MyChatMain extends javax.swing.JFrame {
                     } else if (data[2].equals(done)) {
                         usersList.setText("");
                         writeUsers();
-                        userList.clear();
+                        synchronized (userList) {
+                        	userList.clear();
+						}
                     }
                 }
            }catch(Exception ex) {
@@ -58,7 +60,7 @@ public class MyChatMain extends javax.swing.JFrame {
          IncomingReader.start();
     }
 
-    public void userAdd(String data) {
+    public synchronized void userAdd(String data) {
          userList.add(data);
      }
 
@@ -66,7 +68,7 @@ public class MyChatMain extends javax.swing.JFrame {
          chatTextArea.append(data + " has disconnected.\n");
      }
 
-    public void writeUsers() {
+    public synchronized void writeUsers() {
          String[] tempList = new String[(userList.size())];
          userList.toArray(tempList);
          for (String token:tempList) {
@@ -86,10 +88,10 @@ public class MyChatMain extends javax.swing.JFrame {
 
     public void Disconnect() {
         try {
-               chatTextArea.append("Disconnected.\n");
-               sock.close();
+        	chatTextArea.append("Disconnected.\n");
+            sock.close();
         } catch(Exception ex) {
-               chatTextArea.append("Failed to disconnect. \n");
+        	chatTextArea.append("Failed to disconnect. \n");
         }
         isConnected = false;
         usernameField.setEditable(true);
