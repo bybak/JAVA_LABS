@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ServerMain {
-	String[] temp;
 	ArrayList clientOutputStreams;
 	private ReentrantLock clientOutputStreamsLock = new ReentrantLock();
     ArrayList<String> onlineUsers = new ArrayList();
@@ -40,7 +39,6 @@ public class ServerMain {
 				while ((message = reader.readLine()) != null) {
 					System.out.println("Received: " + message);
 					data = message.split("¥");
-					temp = data;
                     for (String token:data) {
                     	System.out.println(token);
                     }
@@ -65,8 +63,14 @@ public class ServerMain {
 	                    }
 	                    else{
 	                    	System.out.println("Sending: " + data[0] + "¥" + "This user already exist" + "¥" + chat);
-	                    	client.println(data[0] + "¥" + "This user already exist" + "¥" + "exit");
-	                    	client.flush();
+	                    	clientOutputStreamsLock.lock();
+	                    	try{
+		                    	client.println(data[0] + "¥" + "This user already exist" + "¥" + "exit");
+		                    	client.flush();
+	                    	}
+	                    	finally{
+	                    		clientOutputStreamsLock.unlock();
+	                    	}
 	                    }
 					} 
                     else if (data[2].equals(disconnect)) {
@@ -100,7 +104,13 @@ public class ServerMain {
 			while (true) {
 				Socket clientSock = serverSock.accept();
 				PrintWriter writer = new PrintWriter(clientSock.getOutputStream());
-				clientOutputStreams.add(writer);
+				clientOutputStreamsLock.lock();
+				try{
+					clientOutputStreams.add(writer);
+				}
+				finally{
+					clientOutputStreamsLock.unlock();
+				}
 				Thread listener = new Thread(new ClientHandler(clientSock, writer));
 				listener.start();
 				System.out.println("got a connection");
