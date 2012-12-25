@@ -6,9 +6,9 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ServerMain {
 	String[] temp;
 	ArrayList clientOutputStreams;
-	private ReentrantLock clientOutputStreamsLock;
+	private ReentrantLock clientOutputStreamsLock = new ReentrantLock();
     ArrayList<String> onlineUsers = new ArrayList();
-    private ReentrantLock onlineUsersLock;
+    private ReentrantLock onlineUsersLock = new ReentrantLock();
     
 	public class ClientHandler implements Runnable	{
 		BufferedReader reader;

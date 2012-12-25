@@ -16,7 +16,7 @@ public class MyChatMain extends javax.swing.JFrame {
     BufferedReader reader;
     PrintWriter writer;
     ArrayList<String> userList = new ArrayList();
-    private ReentrantLock userListLock;
+    private ReentrantLock userListLock = new ReentrantLock();
     Boolean isConnected = false;
 
     public MyChatMain() {
