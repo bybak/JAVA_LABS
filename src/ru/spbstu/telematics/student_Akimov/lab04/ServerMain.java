@@ -1,11 +1,14 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ServerMain {
 	String[] temp;
 	ArrayList clientOutputStreams;
+	private ReentrantLock clientOutputStreamsLock;
     ArrayList<String> onlineUsers = new ArrayList();
+    private ReentrantLock onlineUsersLock;
     
 	public class ClientHandler implements Runnable	{
 		BufferedReader reader;
@@ -43,7 +46,8 @@ public class ServerMain {
                     }
                     if (data[2].equals(connecting)) {
                     	boolean flag = false;
-                    	synchronized (onlineUsers) {
+                    	onlineUsersLock.lock();
+                    	try{
                     		for(int i=0;i<onlineUsers.size();i++){
     	                    	if(onlineUsers.get(i).equalsIgnoreCase(data[0])){
     	                    		System.out.println("[" + data[0] + "] already exist");
@@ -51,7 +55,10 @@ public class ServerMain {
     	                    		break;
     	                    	}
     	                    }	
-						} 
+                    	}
+                    	finally{
+                    		onlineUsersLock.unlock();
+                    	}
 	                    if(!flag){
 	                    	tellEveryone((data[0] + "¥" + data[1] + "¥" + chat));
 	                    	userAdd(data[0]);
@@ -93,9 +100,7 @@ public class ServerMain {
 			while (true) {
 				Socket clientSock = serverSock.accept();
 				PrintWriter writer = new PrintWriter(clientSock.getOutputStream());
-				synchronized (clientOutputStreams) {
-					clientOutputStreams.add(writer);
-				}
+				clientOutputStreams.add(writer);
 				Thread listener = new Thread(new ClientHandler(clientSock, writer));
 				listener.start();
 				System.out.println("got a connection");
@@ -107,13 +112,19 @@ public class ServerMain {
 		} 
 	} 
 
-	public synchronized void userAdd (String data) {
+	public void userAdd (String data) {
         String message;
         String add = "¥ ¥Connect", done = "Server¥ ¥Done";
-        onlineUsers.add(data);
-        String[] tempList = new String[(onlineUsers.size())];
-        onlineUsers.toArray(tempList);
-        
+        String[] tempList;
+        onlineUsersLock.lock();
+        try{
+	        onlineUsers.add(data);
+	        tempList = new String[(onlineUsers.size())];
+	        onlineUsers.toArray(tempList);
+        }
+        finally{
+        	onlineUsersLock.unlock();
+        }
         for (String token:tempList) {
             
             message = (token + add);
@@ -122,13 +133,19 @@ public class ServerMain {
         tellEveryone(done);
 	}
 
-	public synchronized void userRemove (String data) {
+	public void userRemove (String data) {
         String message;
         String add = "¥ ¥Connect", done = "Server¥ ¥Done";
-        onlineUsers.remove(data);
-        String[] tempList = new String[(onlineUsers.size())];
-		onlineUsers.toArray(tempList);
-
+        String[] tempList;
+        onlineUsersLock.lock();
+        try{
+	        onlineUsers.remove(data);
+	        tempList = new String[(onlineUsers.size())];
+			onlineUsers.toArray(tempList);
+        }
+        finally{
+        	onlineUsersLock.unlock();
+        }
         for (String token:tempList) {
             message = (token + add);
             tellEveryone(message);
@@ -136,8 +153,16 @@ public class ServerMain {
         tellEveryone(done);
 	}
 
-        public synchronized void tellEveryone(String message) {
-		Iterator it = clientOutputStreams.iterator();
+        public void tellEveryone(String message) {
+        
+        Iterator it;
+        clientOutputStreamsLock.lock();
+        try{
+        	it = clientOutputStreams.iterator();
+        }
+        finally{
+        	clientOutputStreamsLock.unlock();
+        }
 
 		while (it.hasNext()) {
 			try {

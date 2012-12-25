@@ -5,6 +5,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.JOptionPane;
 
@@ -15,6 +16,7 @@ public class MyChatMain extends javax.swing.JFrame {
     BufferedReader reader;
     PrintWriter writer;
     ArrayList<String> userList = new ArrayList();
+    private ReentrantLock userListLock;
     Boolean isConnected = false;
 
     public MyChatMain() {
@@ -45,9 +47,13 @@ public class MyChatMain extends javax.swing.JFrame {
                     } else if (data[2].equals(done)) {
                         usersList.setText("");
                         writeUsers();
-                        synchronized (userList) {
+                        userListLock.lock();
+                        try{
                         	userList.clear();
 						}
+                        finally{
+                        	userListLock.unlock();
+                        }
                     }
                 }
            }catch(Exception ex) {
@@ -60,21 +66,34 @@ public class MyChatMain extends javax.swing.JFrame {
          IncomingReader.start();
     }
 
-    public synchronized void userAdd(String data) {
-         userList.add(data);
-     }
+    public void userAdd(String data) {
+    	userListLock.lock();
+    	try{
+    		userList.add(data);
+    	}
+    	finally{
+    		userListLock.unlock();
+    	}
+    }
 
     public void userRemove(String data) {
          chatTextArea.append(data + " has disconnected.\n");
      }
 
-    public synchronized void writeUsers() {
-         String[] tempList = new String[(userList.size())];
-         userList.toArray(tempList);
-         for (String token:tempList) {
-             usersList.append(token + "\n");
-         }
-     }
+    public void writeUsers() {
+    	String[] tempList;
+		userListLock.lock();
+		try{
+	    	tempList = new String[(userList.size())];
+		    userList.toArray(tempList);
+		}
+		finally{
+			userListLock.unlock();
+		}
+	    for (String token:tempList) {
+	        usersList.append(token + "\n");
+	    }
+	 }
 
     public void sendDisconnect() {
        String bye = (username + "¥ ¥Disconnect");
