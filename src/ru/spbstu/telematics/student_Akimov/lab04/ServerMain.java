@@ -1,10 +1,12 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ServerMain {
-	ArrayList clientOutputStreams;
+	//ArrayList clientOutputStreams;
+	CopyOnWriteArrayList clientOutputStreams;
 	private ReentrantLock clientOutputStreamsLock = new ReentrantLock();
     ArrayList<String> onlineUsers = new ArrayList();
     private ReentrantLock onlineUsersLock = new ReentrantLock();
@@ -96,7 +98,7 @@ public class ServerMain {
 	}
 
 	public void go() {
-		clientOutputStreams = new ArrayList();
+		clientOutputStreams = new CopyOnWriteArrayList();
 
 		try {
 			ServerSocket serverSock = new ServerSocket(5000);
@@ -169,21 +171,20 @@ public class ServerMain {
         clientOutputStreamsLock.lock();
         try{
         	it = clientOutputStreams.iterator();
+			while (it.hasNext()) {
+				try {
+					PrintWriter writer = (PrintWriter) it.next();
+					writer.println(message);
+					System.out.println("Sending" + message);
+	                writer.flush();
+				}
+				catch (Exception ex) {
+					System.out.println("error telling everyone");
+				}
+			}
         }
         finally{
         	clientOutputStreamsLock.unlock();
         }
-
-		while (it.hasNext()) {
-			try {
-				PrintWriter writer = (PrintWriter) it.next();
-				writer.println(message);
-				System.out.println("Sending" + message);
-                                writer.flush();
-			}
-			catch (Exception ex) {
-				System.out.println("error telling everyone");
-			}
-		}
 	}     
 }
